@@ -74,7 +74,10 @@ public class ActionMenuScreen implements HudElement {
     public String getUsername() {
         return username;
     }
-    public FlagType getFlagType() { return currentFlagType; }
+
+    public FlagType getFlagType() {
+        return currentFlagType;
+    }
 
     @Override
     public void render(DrawContext drawContext, RenderTickCounter tickCounter) {
@@ -88,7 +91,7 @@ public class ActionMenuScreen implements HudElement {
         int screenWidth = client.getWindow().getScaledWidth();
         int screenHeight = client.getWindow().getScaledHeight();
 
-         // Handle all mouse input for dragging and resizing
+        // Handle all mouse input for dragging and resizing
         handleMouseInput(client);
 
         // Ensure the HUD stays within the screen bounds
@@ -96,30 +99,33 @@ public class ActionMenuScreen implements HudElement {
         this.hudY = Math.max(0, Math.min(this.hudY, screenHeight - this.hudHeight));
 
         // Draw the main background (changes color when moving/resizing)
-        int backgroundColor = (isDragging || isResizing) ? ColorHelper.getArgb(200, 50, 50, 100) : ColorHelper.getArgb(180, 0, 0, 0);
+        int backgroundColor = (isDragging || isResizing) ? ColorHelper.getArgb(200, 50, 50, 100)
+                : ColorHelper.getArgb(180, 0, 0, 0);
         drawContext.fill(this.hudX, this.hudY, this.hudX + this.hudWidth, this.hudY + this.hudHeight, backgroundColor);
 
         // Highlight the resize zone on hover
         double mouseX = client.mouse.getX() * client.getWindow().getScaledWidth() / client.getWindow().getWidth();
         double mouseY = client.mouse.getY() * client.getWindow().getScaledHeight() / client.getWindow().getHeight();
         int hotZoneSize = 10;
-        boolean mouseOverResizeZone = !isDragging && mouseX >= this.hudX + this.hudWidth - hotZoneSize && mouseX <= this.hudX + this.hudWidth &&
-                                    mouseY >= this.hudY + this.hudHeight - hotZoneSize && mouseY <= this.hudY + this.hudHeight;
+        boolean mouseOverResizeZone = !isDragging && mouseX >= this.hudX + this.hudWidth - hotZoneSize
+                && mouseX <= this.hudX + this.hudWidth &&
+                mouseY >= this.hudY + this.hudHeight - hotZoneSize && mouseY <= this.hudY + this.hudHeight;
         if (mouseOverResizeZone) {
             int highlightColor = ColorHelper.getArgb(100, 255, 255, 255); // Semi-transparent white
             drawContext.fill(
-                this.hudX + this.hudWidth - hotZoneSize,
-                this.hudY + this.hudHeight - hotZoneSize,
-                this.hudX + this.hudWidth,
-                this.hudY + this.hudHeight,
-                highlightColor
-            );
+                    this.hudX + this.hudWidth - hotZoneSize,
+                    this.hudY + this.hudHeight - hotZoneSize,
+                    this.hudX + this.hudWidth,
+                    this.hudY + this.hudHeight,
+                    highlightColor);
         }
 
         // Draw the title bar and text
         int titleBarHeight = 15;
-        drawContext.fill(this.hudX, this.hudY, this.hudX + this.hudWidth, this.hudY + titleBarHeight, ColorHelper.getArgb(220, 100, 100, 100));
-        drawContext.drawText(textRenderer, "Actions for: " + username, this.hudX + PADDING, this.hudY + PADDING, 0xFFFFFFFF, true);
+        drawContext.fill(this.hudX, this.hudY, this.hudX + this.hudWidth, this.hudY + titleBarHeight,
+                ColorHelper.getArgb(220, 100, 100, 100));
+        drawContext.drawText(textRenderer, "Actions for: " + username, this.hudX + PADDING, this.hudY + PADDING,
+                0xFFFFFFFF, true);
 
         // Dynamically draw actions that have a key bound
         int yOffset = this.hudY + PADDING + 20;
@@ -129,7 +135,8 @@ public class ActionMenuScreen implements HudElement {
         KeyBinding teleportBinding = AutoChatMod.getKeyBindTeleport();
         if (!teleportBinding.isUnbound()) {
             String key = teleportBinding.getBoundKeyLocalizedText().getString();
-            Text text = Text.literal("Teleport to User (").append(Text.literal(key).setStyle(Style.EMPTY.withColor(Formatting.YELLOW))).append(")");
+            Text text = Text.literal("Teleport to User (")
+                    .append(Text.literal(key).setStyle(Style.EMPTY.withColor(Formatting.YELLOW))).append(")");
             drawContext.drawText(textRenderer, text, this.hudX + PADDING, yOffset, 0xFF00FF00, true); // Green
             yOffset += lineHeight;
         }
@@ -138,7 +145,8 @@ public class ActionMenuScreen implements HudElement {
         KeyBinding punishBinding = AutoChatMod.getKeyBindPunish();
         if (!punishBinding.isUnbound()) {
             String key = punishBinding.getBoundKeyLocalizedText().getString();
-            Text text = Text.literal("Punish User (").append(Text.literal(key).setStyle(Style.EMPTY.withColor(Formatting.YELLOW))).append(")");
+            Text text = Text.literal("Punish User (")
+                    .append(Text.literal(key).setStyle(Style.EMPTY.withColor(Formatting.YELLOW))).append(")");
             drawContext.drawText(textRenderer, text, this.hudX + PADDING, yOffset, 0xFFFF0000, true); // Red
             yOffset += lineHeight;
         }
@@ -147,7 +155,8 @@ public class ActionMenuScreen implements HudElement {
         KeyBinding altsBinding = AutoChatMod.getKeyBindAlts();
         if (!altsBinding.isUnbound()) {
             String key = altsBinding.getBoundKeyLocalizedText().getString();
-            Text text = Text.literal("Check Alts (").append(Text.literal(key).setStyle(Style.EMPTY.withColor(Formatting.YELLOW))).append(")");
+            Text text = Text.literal("Check Alts (")
+                    .append(Text.literal(key).setStyle(Style.EMPTY.withColor(Formatting.YELLOW))).append(")");
             drawContext.drawText(textRenderer, text, this.hudX + PADDING, yOffset, 0xFFFFFFFF, true); // White
             yOffset += lineHeight;
         }
@@ -156,30 +165,48 @@ public class ActionMenuScreen implements HudElement {
         KeyBinding checkflyBinding = AutoChatMod.getKeyBindCheckFly();
         if (!checkflyBinding.isUnbound()) {
             String key = checkflyBinding.getBoundKeyLocalizedText().getString();
-            Text text = Text.literal("Run /checkfly (").append(Text.literal(key).setStyle(Style.EMPTY.withColor(Formatting.YELLOW))).append(")");
+            Text text = Text.literal("Run /checkfly (")
+                    .append(Text.literal(key).setStyle(Style.EMPTY.withColor(Formatting.YELLOW))).append(")");
             drawContext.drawText(textRenderer, text, this.hudX + PADDING, yOffset, 0xFFFFFFFF, true); // White
+            yOffset += lineHeight;
         }
-    
+
+        // Action 5: Approve Report (Only if REPORT)
+        if (currentFlagType == FlagType.REPORT) {
+            KeyBinding approveReportBinding = AutoChatMod.getKeyBindApproveReport();
+            if (!approveReportBinding.isUnbound()) {
+                String key = approveReportBinding.getBoundKeyLocalizedText().getString();
+                Text text = Text.literal("Approve Report (")
+                        .append(Text.literal(key).setStyle(Style.EMPTY.withColor(Formatting.YELLOW))).append(")");
+                drawContext.drawText(textRenderer, text, this.hudX + PADDING, yOffset, 0xFF55FF55, true); // Green
+                yOffset += lineHeight;
+            }
+        }
+
         // Draw dragging indicator text if dragging
         if (isDragging) {
-            drawContext.drawText(textRenderer, "Dragging...", this.hudX + PADDING, this.hudY + this.hudHeight - 15, 0xFFFFFF00, true);
+            drawContext.drawText(textRenderer, "Dragging...", this.hudX + PADDING, this.hudY + this.hudHeight - 15,
+                    0xFFFFFF00, true);
         }
     }
 
     private void handleMouseInput(MinecraftClient client) {
-        if (client.mouse == null) return;
+        if (client.mouse == null)
+            return;
         double mouseX = client.mouse.getX() * client.getWindow().getScaledWidth() / client.getWindow().getWidth();
         double mouseY = client.mouse.getY() * client.getWindow().getScaledHeight() / client.getWindow().getHeight();
-        boolean mousePressed = GLFW.glfwGetMouseButton(client.getWindow().getHandle(), GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
-    
+        boolean mousePressed = GLFW.glfwGetMouseButton(client.getWindow().getHandle(),
+                GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
+
         // Define a "hot zone" for resizing (e.g., the bottom-right corner)
         int hotZoneSize = 10;
-        boolean mouseOverResizeZone = mouseX >= this.hudX + this.hudWidth - hotZoneSize && mouseX <= this.hudX + this.hudWidth &&
-                                      mouseY >= this.hudY + this.hudHeight - hotZoneSize && mouseY <= this.hudY + this.hudHeight;
-    
+        boolean mouseOverResizeZone = mouseX >= this.hudX + this.hudWidth - hotZoneSize
+                && mouseX <= this.hudX + this.hudWidth &&
+                mouseY >= this.hudY + this.hudHeight - hotZoneSize && mouseY <= this.hudY + this.hudHeight;
+
         boolean mouseOverHUD = mouseX >= this.hudX && mouseX <= this.hudX + this.hudWidth &&
-                               mouseY >= this.hudY && mouseY <= this.hudY + this.hudHeight;
-    
+                mouseY >= this.hudY && mouseY <= this.hudY + this.hudHeight;
+
         // When the mouse button is released, stop all actions and save
         if (!mousePressed && (isDragging || isResizing)) {
             isDragging = false;
@@ -192,7 +219,7 @@ public class ActionMenuScreen implements HudElement {
             config.hudHeight = this.hudHeight;
             sevengtz.autochatmod.ConfigManager.saveConfig();
         }
-    
+
         // Start a resize if clicking in the hot zone
         if (mousePressed && !wasMousePressed && mouseOverResizeZone) {
             isResizing = true;
@@ -207,7 +234,7 @@ public class ActionMenuScreen implements HudElement {
             dragStartX = mouseX - this.hudX;
             dragStartY = mouseY - this.hudY;
         }
-    
+
         // Update dimensions while resizing
         if (isResizing && mousePressed) {
             int minWidth = 150;
@@ -215,13 +242,13 @@ public class ActionMenuScreen implements HudElement {
             this.hudWidth = (int) Math.max(minWidth, mouseX - this.hudX);
             this.hudHeight = (int) Math.max(minHeight, mouseY - this.hudY);
         }
-    
+
         // Update position while dragging
         if (isDragging && mousePressed) {
             this.hudX = (int) (mouseX - dragStartX);
             this.hudY = (int) (mouseY - dragStartY);
         }
-    
+
         wasMousePressed = mousePressed;
     }
 }

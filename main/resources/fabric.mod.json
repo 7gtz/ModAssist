@@ -4,7 +4,9 @@
   "version": "${version}",
   "name": "ModAssist",
   "description": "A mod created to assist InvadedLands staff members with moderation.",
-  "authors": ["7gtz"],
+  "authors": [
+    "7gtz"
+  ],
   "contact": {},
   "license": "MIT",
   "environment": "client",

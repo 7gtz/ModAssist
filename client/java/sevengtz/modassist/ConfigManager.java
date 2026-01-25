@@ -1,22 +1,27 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package sevengtz.autochatmod;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import net.fabricmc.loader.api.FabricLoader;
-
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import net.fabricmc.loader.api.FabricLoader;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConfigManager {
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final Path CONFIG_FILE = FabricLoader.getInstance()
-            .getConfigDir().resolve("autochatmod.json");
-
+    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
+    private static final Path CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve("autochatmod.json");
     private static Config config;
 
     public static void init() {
@@ -24,33 +29,45 @@ public class ConfigManager {
     }
 
     public static void loadConfig() {
-        if (Files.exists(CONFIG_FILE)) {
+        if (Files.exists(CONFIG_FILE, new LinkOption[0])) {
             try {
                 String content = Files.readString(CONFIG_FILE);
-                config = GSON.fromJson(content, Config.class);
+                config = (Config)GSON.fromJson(content, Config.class);
                 if (config == null) {
                     config = createDefaultConfig();
                 }
-                // Ensure all lists are initialized
-                if (config.flaggedTerms == null)
+
+                if (config.flaggedTerms == null) {
                     config.flaggedTerms = getDefaultFlaggedTerms();
-                if (config.enableDiscordPing == null)
+                }
+
+                if (config.enableDiscordPing == null) {
                     config.enableDiscordPing = true;
-                if (config.flaggedPhrases == null)
+                }
+
+                if (config.flaggedPhrases == null) {
                     config.flaggedPhrases = getDefaultFlaggedPhrases();
-                if (config.whitelistedTerms == null)
+                }
+
+                if (config.whitelistedTerms == null) {
                     config.whitelistedTerms = getDefaultWhitelistedTerms();
-                if (config.whitelistedPhrases == null)
+                }
+
+                if (config.whitelistedPhrases == null) {
                     config.whitelistedPhrases = getDefaultWhitelistedPhrases();
-                if (config.spamWhitelistPrefixes == null)
+                }
+
+                if (config.spamWhitelistPrefixes == null) {
                     config.spamWhitelistPrefixes = getDefaultSpamWhitelistPrefixes();
-            } catch (IOException | JsonSyntaxException e) {
+                }
+            } catch (JsonSyntaxException | IOException e) {
                 AutoChatMod.LOGGER.error("Failed to load config, using defaults", e);
                 config = createDefaultConfig();
             }
         } else {
             config = createDefaultConfig();
         }
+
         saveConfig();
     }
 
@@ -62,6 +79,7 @@ public class ConfigManager {
         } catch (IOException e) {
             AutoChatMod.LOGGER.error("Failed to save config", e);
         }
+
     }
 
     private static Config createDefaultConfig() {
@@ -90,39 +108,37 @@ public class ConfigManager {
         defaultConfig.autoOpenPunishGuiOnFlag = false;
         defaultConfig.instantPunishForSpam = false;
         defaultConfig.evidenceScreenshotEnabled = true;
+        defaultConfig.evidenceModeratorName = "";
+        defaultConfig.xrayAlertThreshold = 3;
+        defaultConfig.xrayTimeWindowSeconds = 60;
+        defaultConfig.ignoredSystemUsernames = new ArrayList<>(Arrays.asList(
+                "Info", "Website", "Store", "Rules", "Discord"
+        ));
+        defaultConfig.xrayAlertSound = SoundOption.EXPERIENCE_ORB;
+        defaultConfig.xrayAlertSoundEnabled = true;
+        defaultConfig.reportAlertSound = SoundOption.EXPERIENCE_ORB;
+        defaultConfig.reportAlertSoundEnabled = true;
         return defaultConfig;
     }
 
     public static List<String> getDefaultFlaggedTerms() {
-        return new ArrayList<>(Arrays.asList(
-                "nigger", "faggot", "fag", "chink", "tranny", "kys", "slit", "cum", "hitler",
-                "stalin", "child", "doxx", "doxbin", "beaner", "paki", "negro", "queer", "dox",
-                "ddos", "doxxed", "swatted", "ddosed", "cancer", "family", "niger", "frocio",
-                "pd", "pede", "negger", "swat", "suicide"));
+        return new ArrayList(Arrays.asList("nigger", "faggot", "fag", "chink", "tranny", "kys", "slit", "cum", "hitler", "stalin", "child", "doxx", "doxbin", "beaner", "paki", "negro", "queer", "dox", "ddos", "doxxed", "swatted", "ddosed", "cancer", "family", "niger", "frocio", "pd", "pede", "negger", "swat", "suicide"));
     }
 
     public static List<String> getDefaultFlaggedPhrases() {
-        return new ArrayList<>(Arrays.asList(
-                "hang yourself", "kill yourself", "kill urself", "slit your wrists", "hang urself",
-                "kill ur self", "kill your self", "get cancer", "slit ur wrists", "hang ur self",
-                "neck urself", "hope you die", "ching chong", "ur ip", "ur address", "your ip",
-                "your address", "black monkey"));
+        return new ArrayList(Arrays.asList("hang yourself", "kill yourself", "kill urself", "slit your wrists", "hang urself", "kill ur self", "kill your self", "get cancer", "slit ur wrists", "hang ur self", "neck urself", "hope you die", "ching chong", "ur ip", "ur address", "your ip", "your address", "black monkey"));
     }
 
     public static List<String> getDefaultWhitelistedTerms() {
-        return new ArrayList<>(Arrays.asList(
-                "think", "never", "bigger", "digger", "nicer", "china", "pakistan", "rag",
-                "nice", "sweat", "tiger", "chill", "chunk", "thang", "queen"));
+        return new ArrayList(Arrays.asList("think", "never", "bigger", "digger", "nicer", "china", "pakistan", "rag", "nice", "sweat", "tiger", "chill", "chunk", "thang", "queen"));
     }
 
     public static List<String> getDefaultWhitelistedPhrases() {
-        return new ArrayList<>(Arrays.asList("Suicide Encouragement"));
+        return new ArrayList(Arrays.asList("Suicide Encouragement"));
     }
 
     public static List<String> getDefaultSpamWhitelistPrefixes() {
-        return new ArrayList<>(Arrays.asList(
-                "[Broadcast]", "[Crates]", "[Spy]", "[System]", "[Server]", "[Auth]", "[*]", "[S]", "[SPAM]",
-                "[FLAGGED]", "X-Ray ▶"));
+        return new ArrayList(Arrays.asList("[Broadcast]", "[Crates]", "[Spy]", "[System]", "[Server]", "[Auth]", "[*]", "[S]", "[SPAM]", "[FLAGGED]", "X-Ray ▶"));
     }
 
     public static Config getConfig() {
@@ -146,38 +162,32 @@ public class ConfigManager {
         public double spamSimilarityThreshold = 0.9;
         public int spamMessageCount = 3;
         public int spamTimeWindowSeconds = 15;
-        public List<String> flaggedTerms = new ArrayList<>();
-        public List<String> flaggedPhrases = new ArrayList<>();
-        public List<String> whitelistedTerms = new ArrayList<>();
-        public List<String> whitelistedPhrases = new ArrayList<>();
-        public List<String> spamWhitelistPrefixes = new ArrayList<>();
-        public SoundOption alertSound = SoundOption.EXPERIENCE_ORB;
-        public float alertSoundVolume = 1.0F;
-        public float alertSoundPitch = 1.0F;
-        public boolean alertSoundEnabled = true;
-        public boolean autoOpenOverlayOnFlag = true;
-        public boolean autoOpenPunishGuiOnFlag = false;
-        public boolean instantPunishForSpam = false;
-        public int hudX = -1;
-        public int hudY = -1;
-        public int hudWidth = 250;
-        public int hudHeight = 100;
-        public boolean evidenceScreenshotEnabled = true;
-        public String evidenceModeratorName = "";
-
-        // X-Ray Configuration
+        public List<String> flaggedTerms = new ArrayList();
+        public List<String> flaggedPhrases = new ArrayList();
+        public List<String> whitelistedTerms = new ArrayList();
+        public List<String> whitelistedPhrases = new ArrayList();
+        public List<String> spamWhitelistPrefixes = new ArrayList();
+        public SoundOption alertSound;
+        public float alertSoundVolume;
+        public float alertSoundPitch;
+        public boolean alertSoundEnabled;
+        public boolean autoOpenOverlayOnFlag;
+        public boolean autoOpenPunishGuiOnFlag;
+        public boolean instantPunishForSpam;
+        public int hudX;
+        public int hudY;
+        public int hudWidth;
+        public int hudHeight;
+        public boolean evidenceScreenshotEnabled;
+        public String evidenceModeratorName;
         public int xrayAlertThreshold = 4;
         public int xrayTimeWindowSeconds = 10;
+        public List<String> ignoredSystemUsernames = new ArrayList<>();
+
         public SoundOption xrayAlertSound;
         public boolean xrayAlertSoundEnabled;
-
-        // Report Configuration
         public SoundOption reportAlertSound;
         public boolean reportAlertSoundEnabled;
-
-        public List<String> ignoredSystemUsernames = new ArrayList<>();
-        public boolean xrayAlertPing = true;
-        public boolean reportAlertPing = true;
 
         public Config() {
             this.alertSound = SoundOption.EXPERIENCE_ORB;
@@ -187,15 +197,11 @@ public class ConfigManager {
             this.autoOpenOverlayOnFlag = true;
             this.autoOpenPunishGuiOnFlag = false;
             this.instantPunishForSpam = false;
+            this.hudX = -1;
+            this.hudY = -1;
+            this.hudWidth = 250;
+            this.hudHeight = 100;
             this.evidenceScreenshotEnabled = true;
-
-            // X-Ray Defaults
-            this.xrayAlertSound = SoundOption.EXPERIENCE_ORB;
-            this.xrayAlertSoundEnabled = true;
-
-            // Report Defaults
-            this.reportAlertSound = SoundOption.EXPERIENCE_ORB;
-            this.reportAlertSoundEnabled = true;
         }
     }
 }
