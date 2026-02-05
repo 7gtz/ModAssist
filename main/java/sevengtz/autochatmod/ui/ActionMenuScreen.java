@@ -195,17 +195,22 @@ public class ActionMenuScreen implements HudElement {
         ModConfig config = ConfigManager.getConfig();
         int yOffset = hudY + TITLE_BAR_HEIGHT + PADDING;
 
+        yOffset = drawPremiumAction(drawContext, textRenderer, AutoChatMod.getKeyBindTeleport(),
+                "Teleport to Player", COLOR_SUCCESS, yOffset);
+
+        yOffset = drawPremiumAction(drawContext, textRenderer, AutoChatMod.getKeyBindPunish(),
+                "Punish Player", COLOR_DANGER, yOffset);
+
         yOffset = drawPremiumAction(drawContext, textRenderer, AutoChatMod.getKeyBindCommand1(),
-                config.command1Label, COLOR_DANGER, yOffset);
+                config.command1Label, COLOR_TEXT_PRIMARY, yOffset);
 
         yOffset = drawPremiumAction(drawContext, textRenderer, AutoChatMod.getKeyBindCommand2(),
                 config.command2Label, COLOR_TEXT_PRIMARY, yOffset);
 
-        yOffset = drawPremiumAction(drawContext, textRenderer, AutoChatMod.getKeyBindCommand3(),
-                config.command3Label, COLOR_TEXT_PRIMARY, yOffset);
-
-        yOffset = drawPremiumAction(drawContext, textRenderer, AutoChatMod.getKeyBindCommand4(),
-                config.command4Label, COLOR_ACCENT, yOffset);
+        if (currentFlagType == FlagType.REPORT) {
+            drawPremiumAction(drawContext, textRenderer, AutoChatMod.getKeyBindCommand3(),
+                    config.command3Label, COLOR_ACCENT, yOffset);
+        }
     }
 
     /**

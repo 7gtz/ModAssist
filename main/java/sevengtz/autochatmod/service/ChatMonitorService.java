@@ -228,12 +228,8 @@ public class ChatMonitorService {
         flaggedMessages.add(messageContent);
 
         if (config.enableDiscordPing) {
-            StringBuilder spamMessages = new StringBuilder("`Spam detected from " + userInfo.username() + ":\n");
-            for (MessageEntry entry : similarMessages) {
-                spamMessages.append("- ").append(entry.message()).append("\n");
-            }
-            spamMessages.append("- ").append(messageContent).append("`");
-            discordWebhook.sendMessage(spamMessages.toString());
+            List<String> history = similarMessages.stream().map(MessageEntry::message).toList();
+            discordWebhook.sendSpamAlert(userInfo.username(), messageContent, history);
         }
 
         spamDetector.clearHistory();
@@ -261,8 +257,7 @@ public class ChatMonitorService {
             }
 
             if (config.enableDiscordPing && config.xrayAlertPing) {
-                discordWebhook.sendMessage(DiscordWebhook.formatXRayAlert(
-                        result.username(), result.count(), result.oreType()));
+                discordWebhook.sendXRayAlert(result.username(), result.count(), result.oreType());
             }
         }
 
@@ -289,8 +284,7 @@ public class ChatMonitorService {
         }
 
         if (config.enableDiscordPing && config.reportAlertPing) {
-            discordWebhook.sendMessage(DiscordWebhook.formatReportAlert(
-                    result.reporter(), result.reportee(), result.reason()));
+            discordWebhook.sendReportAlert(result.reporter(), result.reportee(), result.reason());
         }
 
         return true;
@@ -364,8 +358,7 @@ public class ChatMonitorService {
 
         if (config.enableDiscordPing && !isSpam) {
             String content = extractCleanMessage(originalMessage);
-            String alertType = isSpam ? "Spam detected" : "Flagged message";
-            discordWebhook.sendMessage(DiscordWebhook.formatAlert(alertType, username, content));
+            discordWebhook.sendFlaggedAlert(username, content);
         }
 
         displayFlaggedMessage(username, originalMessage, isSpam);

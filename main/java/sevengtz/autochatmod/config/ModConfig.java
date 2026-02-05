@@ -10,7 +10,9 @@ import java.util.List;
 public class ModConfig {
 
     // Discord Integration
-    public String webhookUrl = "";
+    public String webhookUrl = ""; // Fallback/General (Standard Discord Webhook)
+    public boolean useCustomBot = true; // Default to true for staff team
+    public String customBotUrl = "http://YOUR_BOT_SERVER_IP:3000"; // HARDCODED BOT URL
     public String userMentionId = "";
     public Boolean enableDiscordPing = false;
 
@@ -71,22 +73,17 @@ public class ModConfig {
     // Use {player} as placeholder for the target username
     // Commands are sent without the leading slash
 
-    // Command #1 (default: Punish)
-    public String command1Label = "Punish Player";
-    public String command1Command = "punish {player}";
-    public String command1InstantCommand = "punish {player} i:1";
+    // Command #1 (Default: Alts)
+    public String command1Label = "Check Alts";
+    public String command1Command = "alts {player} true";
 
-    // Command #2 (default: Check Alts)
-    public String command2Label = "Check Alts";
-    public String command2Command = "alts {player} true";
+    // Command #2 (Default: Check Fly)
+    public String command2Label = "Check Fly";
+    public String command2Command = "checkfly {player}";
 
-    // Command #3 (default: Check Fly)
-    public String command3Label = "Check Fly";
-    public String command3Command = "checkfly {player}";
-
-    // Command #4 (default: Approve Report)
-    public String command4Label = "Approve Report";
-    public String command4Command = "approvereport {player}";
+    // Command #3 (Default: Approve Report)
+    public String command3Label = "Approve Report";
+    public String command3Command = "approvereport {player}";
 
     /**
      * Creates a new ModConfig with default values.

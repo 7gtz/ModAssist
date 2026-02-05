@@ -48,17 +48,24 @@ public class AutoChatMod implements ClientModInitializer {
     private static final KeyBinding.Category AUTOCHAT_CATEGORY = KeyBinding.Category.create(
             Identifier.of(MOD_ID, "keybinds"));
 
+    // Hardcoded Commands
+    public static final String TELEPORT_COMMAND = "tp {player}";
+    public static final String TELEPORT_OFFLINE_COMMAND = "goto p:{player}";
+    public static final String PUNISH_COMMAND = "punish {player}";
+    public static final String PUNISH_INSTANT_COMMAND = "punish {player} i:1";
+
     // Services
     private static ChatMonitorService chatMonitor;
     private static ActionMenuScreen actionMenu;
 
     // Keybindings
+    private static KeyBinding keyBindTeleport;
+    private static KeyBinding keyBindPunish;
+    private static KeyBinding keyBindClose;
+    private static KeyBinding keyBindSelectPlayer;
     private static KeyBinding keyBindCommand1;
     private static KeyBinding keyBindCommand2;
     private static KeyBinding keyBindCommand3;
-    private static KeyBinding keyBindCommand4;
-    private static KeyBinding keyBindClose;
-    private static KeyBinding keyBindSelectPlayer;
 
     @Override
     public void onInitializeClient() {
@@ -173,12 +180,13 @@ public class AutoChatMod implements ClientModInitializer {
      */
     private void registerKeybinds() {
         // Register all keybindings
-        keyBindCommand1 = registerKey("command_1", GLFW.GLFW_KEY_P);
-        keyBindCommand2 = registerKey("command_2", GLFW.GLFW_KEY_L);
-        keyBindCommand3 = registerKey("command_3", GLFW.GLFW_KEY_H);
-        keyBindCommand4 = registerKey("command_4", GLFW.GLFW_KEY_9);
+        keyBindTeleport = registerKey("teleport", GLFW.GLFW_KEY_X);
+        keyBindPunish = registerKey("punish", GLFW.GLFW_KEY_P);
         keyBindClose = registerKey("close", GLFW.GLFW_KEY_C);
+        keyBindCommand1 = registerKey("command1", GLFW.GLFW_KEY_L); // Was Alts
+        keyBindCommand2 = registerKey("command2", GLFW.GLFW_KEY_H); // Was CheckFly
         keyBindSelectPlayer = registerKey("select_player", GLFW.GLFW_KEY_G);
+        keyBindCommand3 = registerKey("command3", GLFW.GLFW_KEY_9); // Was ApproveReport
 
         // Register tick handler for keybind processing
         ClientTickEvents.END_CLIENT_TICK.register(this::handleKeybinds);
@@ -213,20 +221,24 @@ public class AutoChatMod implements ClientModInitializer {
         if (username == null)
             return;
 
-        if (keyBindCommand1.wasPressed()) {
-            handleCommand1(client, username);
+        if (keyBindTeleport.wasPressed()) {
+            handleTeleport(client, username);
         }
 
         if (keyBindCommand2.wasPressed()) {
             handleCommand2(client, username);
         }
 
-        if (keyBindCommand3.wasPressed()) {
-            handleCommand3(client, username);
+        if (keyBindCommand1.wasPressed()) {
+            handleCommand1(client, username);
         }
 
-        if (keyBindCommand4.wasPressed()) {
-            handleCommand4(client, username);
+        if (keyBindPunish.wasPressed()) {
+            handlePunish(client, username);
+        }
+
+        if (keyBindCommand3.wasPressed()) {
+            handleCommand3(client, username);
         }
 
         if (keyBindClose.wasPressed()) {
@@ -248,23 +260,15 @@ public class AutoChatMod implements ClientModInitializer {
         }
     }
 
-    private void handleCommand1(MinecraftClient client, String username) {
-        LOGGER.info("[AutoChatMod]: Command #1 keybind pressed for {}", username);
-        ModConfig config = ConfigManager.getConfig();
+    private void handleTeleport(MinecraftClient client, String username) {
+        LOGGER.info("[AutoChatMod]: Teleport keybind pressed for {}", username);
 
-        boolean isInstantAction = actionMenu.getFlagType() == FlagType.SPAM &&
-                config.instantPunishForSpam;
-
-        String commandTemplate = isInstantAction ? config.command1InstantCommand : config.command1Command;
+        boolean isOnline = isPlayerOnline(client, username);
+        String commandTemplate = isOnline ? TELEPORT_COMMAND : TELEPORT_OFFLINE_COMMAND;
         String command = ModConfig.processCommand(commandTemplate, username);
         client.player.networkHandler.sendChatCommand(command);
 
-        if (isInstantAction) {
-            sendFeedback(client, "Instant action on " + username + " for spam.");
-            actionMenu.hide();
-        } else {
-            sendFeedback(client, "Running: /" + command);
-        }
+        sendFeedback(client, "Teleporting to " + username + (isOnline ? "" : " (Offline/Hidden)"));
     }
 
     private void handleCommand2(MinecraftClient client, String username) {
@@ -275,6 +279,33 @@ public class AutoChatMod implements ClientModInitializer {
         sendFeedback(client, "Running: /" + command);
     }
 
+    private void handleCommand1(MinecraftClient client, String username) {
+        LOGGER.info("[AutoChatMod]: Command #1 keybind pressed for {}", username);
+        ModConfig config = ConfigManager.getConfig();
+        String command = ModConfig.processCommand(config.command1Command, username);
+        client.player.networkHandler.sendChatCommand(command);
+        sendFeedback(client, "Running: /" + command);
+    }
+
+    private void handlePunish(MinecraftClient client, String username) {
+        LOGGER.info("[AutoChatMod]: Punish keybind pressed for {}", username);
+        ModConfig config = ConfigManager.getConfig();
+
+        boolean isInstantPunish = actionMenu.getFlagType() == FlagType.SPAM &&
+                config.instantPunishForSpam;
+
+        String commandTemplate = isInstantPunish ? PUNISH_INSTANT_COMMAND : PUNISH_COMMAND;
+        String command = ModConfig.processCommand(commandTemplate, username);
+        client.player.networkHandler.sendChatCommand(command);
+
+        if (isInstantPunish) {
+            sendFeedback(client, "Instantly punishing " + username + " for spam.");
+            actionMenu.hide();
+        } else {
+            sendFeedback(client, "Running: /" + command);
+        }
+    }
+
     private void handleCommand3(MinecraftClient client, String username) {
         LOGGER.info("[AutoChatMod]: Command #3 keybind pressed for {}", username);
         ModConfig config = ConfigManager.getConfig();
@@ -283,18 +314,18 @@ public class AutoChatMod implements ClientModInitializer {
         sendFeedback(client, "Running: /" + command);
     }
 
-    private void handleCommand4(MinecraftClient client, String username) {
-        LOGGER.info("[AutoChatMod]: Command #4 keybind pressed for {}", username);
-        ModConfig config = ConfigManager.getConfig();
-        String command = ModConfig.processCommand(config.command4Command, username);
-        client.player.networkHandler.sendChatCommand(command);
-        sendFeedback(client, "Running: /" + command);
-    }
-
     private void handleClose(MinecraftClient client) {
         LOGGER.info("[AutoChatMod]: Close keybind pressed");
         sendFeedback(client, "GUI closed.");
         actionMenu.hide();
+    }
+
+    private boolean isPlayerOnline(MinecraftClient client, String username) {
+        if (client.getNetworkHandler() != null) {
+            return client.getNetworkHandler().getPlayerList().stream()
+                    .anyMatch(entry -> entry.getProfile().name().equalsIgnoreCase(username));
+        }
+        return false;
     }
 
     private void sendFeedback(MinecraftClient client, String message) {
@@ -319,28 +350,32 @@ public class AutoChatMod implements ClientModInitializer {
     }
 
     // Public accessors for keybindings (used by ActionMenuScreen)
-    public static KeyBinding getKeyBindCommand1() {
-        return keyBindCommand1;
+    public static KeyBinding getKeyBindTeleport() {
+        return keyBindTeleport;
     }
 
-    public static KeyBinding getKeyBindCommand2() {
-        return keyBindCommand2;
-    }
-
-    public static KeyBinding getKeyBindCommand3() {
-        return keyBindCommand3;
-    }
-
-    public static KeyBinding getKeyBindCommand4() {
-        return keyBindCommand4;
+    public static KeyBinding getKeyBindPunish() {
+        return keyBindPunish;
     }
 
     public static KeyBinding getKeyBindClose() {
         return keyBindClose;
     }
 
+    public static KeyBinding getKeyBindCommand2() {
+        return keyBindCommand2;
+    }
+
     public static KeyBinding getKeyBindSelectPlayer() {
         return keyBindSelectPlayer;
+    }
+
+    public static KeyBinding getKeyBindCommand1() {
+        return keyBindCommand1;
+    }
+
+    public static KeyBinding getKeyBindCommand3() {
+        return keyBindCommand3;
     }
 
     // Service accessors

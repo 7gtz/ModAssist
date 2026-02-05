@@ -59,10 +59,19 @@ public class ConfigScreen {
                                 .setSaveConsumer(v -> config.enabled = v)
                                 .build());
 
-                general.addEntry(entryBuilder.startStrField(Text.literal("Discord Webhook URL"), config.webhookUrl)
+                general.addEntry(entryBuilder
+                                .startStrField(Text.literal("Discord Webhook URL (Detailed)"), config.webhookUrl)
                                 .setDefaultValue("")
-                                .setTooltip(Text.literal("Your Discord webhook URL for notifications"))
+                                .setTooltip(Text.literal("Standard webhook or Bot Base URL"))
                                 .setSaveConsumer(v -> config.webhookUrl = v)
+                                .build());
+
+                general.addEntry(entryBuilder
+                                .startBooleanToggle(Text.literal("Use Custom Bot API"), config.useCustomBot)
+                                .setDefaultValue(true)
+                                .setTooltip(Text.literal(
+                                                "If true, sends JSON payloads to the configured Bot URL instead of Discord messages."))
+                                .setSaveConsumer(v -> config.useCustomBot = v)
                                 .build());
 
                 general.addEntry(entryBuilder.startStrField(Text.literal("User Mention ID"), config.userMentionId)
@@ -149,72 +158,49 @@ public class ConfigScreen {
                                                 .literal("§7Use §e{player}§7 as placeholder for the target username."))
                                 .build());
 
-                // Command #1 (default: Punish)
+                // Command #1
                 actions.addEntry(entryBuilder
                                 .startStrField(Text.literal("Command #1 Label"), config.command1Label)
-                                .setDefaultValue("Punish Player")
-                                .setTooltip(Text.literal("Display name in the action menu"))
+                                .setDefaultValue("Check Alts")
+                                .setTooltip(Text.literal("Display name for Command #1"))
                                 .setSaveConsumer(v -> config.command1Label = v)
                                 .build());
 
                 actions.addEntry(entryBuilder
                                 .startStrField(Text.literal("Command #1 Command"), config.command1Command)
-                                .setDefaultValue("punish {player}")
-                                .setTooltip(Text.literal("Command to execute"))
+                                .setDefaultValue("alts {player} true")
+                                .setTooltip(Text.literal("Command to run for Command #1"))
                                 .setSaveConsumer(v -> config.command1Command = v)
                                 .build());
 
-                actions.addEntry(entryBuilder
-                                .startStrField(Text.literal("Command #1 Instant Command"),
-                                                config.command1InstantCommand)
-                                .setDefaultValue("punish {player} i:1")
-                                .setTooltip(Text.literal("Command for instant spam action"))
-                                .setSaveConsumer(v -> config.command1InstantCommand = v)
-                                .build());
-
-                // Command #2 (default: Check Alts)
+                // Command #2
                 actions.addEntry(entryBuilder
                                 .startStrField(Text.literal("Command #2 Label"), config.command2Label)
-                                .setDefaultValue("Check Alts")
-                                .setTooltip(Text.literal("Display name in the action menu"))
+                                .setDefaultValue("Check Fly")
+                                .setTooltip(Text.literal("Display name for Command #2"))
                                 .setSaveConsumer(v -> config.command2Label = v)
                                 .build());
 
                 actions.addEntry(entryBuilder
                                 .startStrField(Text.literal("Command #2 Command"), config.command2Command)
-                                .setDefaultValue("alts {player} true")
-                                .setTooltip(Text.literal("Command to execute"))
+                                .setDefaultValue("checkfly {player}")
+                                .setTooltip(Text.literal("Command to run for Command #2"))
                                 .setSaveConsumer(v -> config.command2Command = v)
                                 .build());
 
-                // Command #3 (default: Check Fly)
+                // Command #3
                 actions.addEntry(entryBuilder
                                 .startStrField(Text.literal("Command #3 Label"), config.command3Label)
-                                .setDefaultValue("Check Fly")
-                                .setTooltip(Text.literal("Display name in the action menu"))
+                                .setDefaultValue("Approve Report")
+                                .setTooltip(Text.literal("Display name for Command #3"))
                                 .setSaveConsumer(v -> config.command3Label = v)
                                 .build());
 
                 actions.addEntry(entryBuilder
                                 .startStrField(Text.literal("Command #3 Command"), config.command3Command)
-                                .setDefaultValue("checkfly {player}")
-                                .setTooltip(Text.literal("Command to execute"))
-                                .setSaveConsumer(v -> config.command3Command = v)
-                                .build());
-
-                // Command #4 (default: Approve Report)
-                actions.addEntry(entryBuilder
-                                .startStrField(Text.literal("Command #4 Label"), config.command4Label)
-                                .setDefaultValue("Approve Report")
-                                .setTooltip(Text.literal("Display name in the action menu"))
-                                .setSaveConsumer(v -> config.command4Label = v)
-                                .build());
-
-                actions.addEntry(entryBuilder
-                                .startStrField(Text.literal("Command #4 Command"), config.command4Command)
                                 .setDefaultValue("approvereport {player}")
-                                .setTooltip(Text.literal("Command to execute"))
-                                .setSaveConsumer(v -> config.command4Command = v)
+                                .setTooltip(Text.literal("Command to run for Command #3"))
+                                .setSaveConsumer(v -> config.command3Command = v)
                                 .build());
         }
 
