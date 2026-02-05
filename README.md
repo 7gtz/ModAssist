@@ -24,12 +24,13 @@ AutoChatMod is a powerful client-side Minecraft mod designed to assist moderator
 ## Key Features
 
 * **Real-time Chat Monitoring**: Automatically detects spam, custom flagged terms (with typo/similarity detection), and exact flagged phrases.
+* **X-Ray & Report Alerts**: specialized detection for server-side X-Ray logs and player reports, with distinct sounds and visual alerts.
 * **Discord Webhook Integration**: Sends instant notifications to a designated Discord channel when a message is flagged, including the message content, the sender, and an optional ping for a user or role.
 * **In-Game Action Overlay (HUD)**: A clean, draggable overlay appears when you click a player's name. It provides one-click access to common moderation commands.
 * **Smart Nickname Resolution**: If a player using a nickname sends a flagged message, the mod automatically resolves their real username before you take action.
 * **Click-to-Act Functionality**: All player messages in chat become clickable, allowing you to quickly open the Action HUD for any user, not just flagged ones.
 * **Fully Configurable**: Every feature can be toggled and tweaked in-game via the ModMenu configuration screen. Customize flagged words, whitelists, spam sensitivity, and more.
-* **Audible Alerts**: A distinct sound plays whenever a message is flagged, ensuring you never miss an alert.
+* **Audible Alerts**: distinct sounds play for different events (Flagged Chat, X-Ray, Reports), ensuring you know exactly what requires attention.
 
 ---
 
@@ -61,17 +62,17 @@ You must have the following installed. All files go into your `/.minecraft/mods/
 Here's a typical moderation scenario using AutoChatMod:
 
 1.  **Passive Monitoring**: Play the game as usual. The mod analyzes chat in the background.
-2.  **Alert!**: A player types a message that triggers one of the detection rules.
-    * **In-Game**: You will hear an alert sound, and the message will be highlighted in your chat with a prefix like `[FLAGGED]` or `[SPAM]`.
-    * **On Discord**: A notification is instantly sent to your configured channel.
+2.  **Alert!**: A player types a message, or the server broadcasts an alert.
+    *   **In-Game**: You will hear a distinct alert sound (customizable per event type), and the message will be highlighted in your chat (e.g., `[FLAGGED]`, `[X-RAY]`, `[REPORT]`).
+    *   **On Discord**: A notification is instantly sent to your configured channel.
 3.  **Take Action**:
-    * In your Minecraft chat, **click the player's username** in the flagged message.
-    * The **Action HUD** will appear. If the player was using a nickname, the mod automatically resolves their real name first.
+    *   In your Minecraft chat, **click the player's username** in the flagged message.
+    *   The **Action HUD** will appear. If the player was using a nickname, the mod automatically resolves their real name first.
 4.  **Use the HUD**: With the HUD open for the target player, you can:
-    * Press **`X`** to teleport to them (`/tp <username>`).
-    * Press **`P`** to open your server's punishment GUI for them (`/punish <username>`).
-    * Press **`C`** to close the HUD.
-    * **Click and drag** the top of the HUD to move it anywhere on your screen.
+    *   Press **`X`** to teleport to them (`/tp <username>`).
+    *   Press **`P`** to open your server's punishment GUI for them (`/punish <username>`).
+    *   Press **`C`** to close the HUD.
+    *   **Click and drag** the top of the HUD to move it anywhere on your screen.
 
 ---
 
@@ -84,9 +85,10 @@ To configure the mod, navigate to the main menu, click **Mods**, find **AutoChat
 | Option                  | Description                                                              |
 | :---------------------- | :----------------------------------------------------------------------- |
 | `Enabled`                 | The master switch. Toggles the entire mod on or off.                     |
-| `Discord Webhook URL`     | Your Discord webhook URL. See below for setup instructions.              |
+| w `Discord Webhook URL`     | Your Discord webhook URL. See below for setup instructions.              |
 | `User Mention ID`         | The Discord User or Role ID to ping in alerts.                           |
 | `Ping on Discord Alert`   | If enabled, the `User Mention ID` will be pinged in every alert message. |
+| `Ignored System Usernames`| List of usernames/prefixes to completely ignore (e.g., specific bots).   |
 
 ### Detection Settings
 
@@ -96,6 +98,20 @@ To configure the mod, navigate to the main menu, click **Mods**, find **AutoChat
 | `Term Detection`         | Enable or disable flagging messages based on individual words (e.g., slurs).                                     |
 | `Phrase Detection`       | Enable or disable flagging messages based on exact phrases (e.g., "kill yourself").                                |
 | `Similarity Threshold`   | A value from `0.0` to `1.0` (`0.8` recommended). Controls how similar a word must be to a flagged term to trigger an alert. This helps catch typos or bypass attempts (e.g., "byp@ss"). |
+
+### X-Ray Settings
+| Option                  | Description                                                              |
+| :---------------------- | :----------------------------------------------------------------------- |
+| `Alert Threshold`       | Number of ores found within the time window to trigger an alert (default: 4). |
+| `Time Window`           | Time in seconds to accumulate ore finds for the threshold check (default: 10s). |
+| `Alert Sound`           | Specific sound to play for X-Ray alerts.                                 |
+| `Discord Ping`          | Whether to send a header ping to Discord for X-Ray alerts specifically.  |
+
+### Report Settings
+| Option                  | Description                                                              |
+| :---------------------- | :----------------------------------------------------------------------- |
+| `Alert Sound`           | Specific sound to play when a player report is detected.                 |
+| `Discord Ping`          | Whether to send a header ping to Discord for Report alerts specifically. |
 
 ### Spam Detection Details
 

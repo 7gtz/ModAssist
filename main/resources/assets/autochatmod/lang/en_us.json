@@ -1,9 +1,10 @@
 {
-  "category.autochatmod.main": "AutoChatMod",
+  "key.categories.autochatmod": "AutoChatMod",
   "key.autochatmod.teleport": "Teleport to User",
   "key.autochatmod.punish": "Punish User",
   "key.autochatmod.close": "Close GUI",
   "key.autochatmod.select_player": "Select Player",
   "key.autochatmod.checkfly": "Run /checkfly",
-  "key.autochatmod.alts": "Run /alts"
+  "key.autochatmod.alts": "Run /alts",
+  "key.autochatmod.approve_report": "Approve Report"
 }

@@ -1,9 +1,11 @@
-package sevengtz.autochatmod;
+package sevengtz.autochatmod.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import net.fabricmc.loader.api.FabricLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,40 +14,53 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ConfigManager {
+/**
+ * Manages loading, saving, and accessing mod configuration.
+ * Provides singleton-style access to the current configuration.
+ */
+public final class ConfigManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger("AutoChatMod");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path CONFIG_FILE = FabricLoader.getInstance()
             .getConfigDir().resolve("autochatmod.json");
 
-    private static Config config;
+    private static ModConfig config;
 
+    // Backward compatibility alias
+    public static class Config extends ModConfig {
+    }
+
+    private ConfigManager() {
+        // Utility class - prevent instantiation
+    }
+
+    /**
+     * Initializes the configuration system.
+     * Should be called during mod initialization.
+     */
     public static void init() {
         loadConfig();
     }
 
+    /**
+     * Loads the configuration from disk.
+     * Creates default configuration if none exists.
+     */
     public static void loadConfig() {
         if (Files.exists(CONFIG_FILE)) {
             try {
                 String content = Files.readString(CONFIG_FILE);
-                config = GSON.fromJson(content, Config.class);
+                config = GSON.fromJson(content, ModConfig.class);
+
                 if (config == null) {
                     config = createDefaultConfig();
                 }
-                // Ensure all lists are initialized
-                if (config.flaggedTerms == null)
-                    config.flaggedTerms = getDefaultFlaggedTerms();
-                if (config.enableDiscordPing == null)
-                    config.enableDiscordPing = true;
-                if (config.flaggedPhrases == null)
-                    config.flaggedPhrases = getDefaultFlaggedPhrases();
-                if (config.whitelistedTerms == null)
-                    config.whitelistedTerms = getDefaultWhitelistedTerms();
-                if (config.whitelistedPhrases == null)
-                    config.whitelistedPhrases = getDefaultWhitelistedPhrases();
-                if (config.spamWhitelistPrefixes == null)
-                    config.spamWhitelistPrefixes = getDefaultSpamWhitelistPrefixes();
+
+                ensureListsInitialized();
+
             } catch (IOException | JsonSyntaxException e) {
-                AutoChatMod.LOGGER.error("Failed to load config, using defaults", e);
+                LOGGER.error("Failed to load config, using defaults", e);
                 config = createDefaultConfig();
             }
         } else {
@@ -54,18 +69,46 @@ public class ConfigManager {
         saveConfig();
     }
 
+    /**
+     * Ensures all list fields are properly initialized.
+     */
+    private static void ensureListsInitialized() {
+        if (config.flaggedTerms == null)
+            config.flaggedTerms = getDefaultFlaggedTerms();
+        if (config.enableDiscordPing == null)
+            config.enableDiscordPing = true;
+        if (config.flaggedPhrases == null)
+            config.flaggedPhrases = getDefaultFlaggedPhrases();
+        if (config.whitelistedTerms == null)
+            config.whitelistedTerms = getDefaultWhitelistedTerms();
+        if (config.whitelistedPhrases == null)
+            config.whitelistedPhrases = getDefaultWhitelistedPhrases();
+        if (config.spamWhitelistPrefixes == null)
+            config.spamWhitelistPrefixes = getDefaultSpamWhitelistPrefixes();
+        if (config.ignoredSystemUsernames == null)
+            config.ignoredSystemUsernames = new ArrayList<>();
+    }
+
+    /**
+     * Saves the current configuration to disk.
+     */
     public static void saveConfig() {
         try {
             Files.createDirectories(CONFIG_FILE.getParent());
             String json = GSON.toJson(config);
             Files.writeString(CONFIG_FILE, json);
         } catch (IOException e) {
-            AutoChatMod.LOGGER.error("Failed to save config", e);
+            LOGGER.error("Failed to save config", e);
         }
     }
 
-    private static Config createDefaultConfig() {
-        Config defaultConfig = new Config();
+    /**
+     * Creates a new configuration with default values.
+     * 
+     * @return A new ModConfig with defaults
+     */
+    private static ModConfig createDefaultConfig() {
+        ModConfig defaultConfig = new ModConfig();
         defaultConfig.webhookUrl = "https://discord.com/api/webhooks/YOUR_WEBHOOK_URL_HERE";
         defaultConfig.userMentionId = "YOUR ID HERE";
         defaultConfig.enabled = true;
@@ -92,6 +135,8 @@ public class ConfigManager {
         defaultConfig.evidenceScreenshotEnabled = true;
         return defaultConfig;
     }
+
+    // Default value providers
 
     public static List<String> getDefaultFlaggedTerms() {
         return new ArrayList<>(Arrays.asList(
@@ -125,77 +170,22 @@ public class ConfigManager {
                 "[FLAGGED]", "X-Ray ▶"));
     }
 
-    public static Config getConfig() {
+    /**
+     * Gets the current configuration.
+     * 
+     * @return The current ModConfig (or Config for compatibility)
+     */
+    public static ModConfig getConfig() {
         return config;
     }
 
-    public static void setConfig(Config newConfig) {
+    /**
+     * Sets a new configuration and saves it.
+     * 
+     * @param newConfig The new configuration to use
+     */
+    public static void setConfig(ModConfig newConfig) {
         config = newConfig;
         saveConfig();
-    }
-
-    public static class Config {
-        public String webhookUrl = "";
-        public String userMentionId = "";
-        public Boolean enableDiscordPing = false;
-        public boolean enabled = true;
-        public boolean spamDetectionEnabled = true;
-        public boolean termDetectionEnabled = true;
-        public boolean phraseDetectionEnabled = true;
-        public double similarityThreshold = 0.8;
-        public double spamSimilarityThreshold = 0.9;
-        public int spamMessageCount = 3;
-        public int spamTimeWindowSeconds = 15;
-        public List<String> flaggedTerms = new ArrayList<>();
-        public List<String> flaggedPhrases = new ArrayList<>();
-        public List<String> whitelistedTerms = new ArrayList<>();
-        public List<String> whitelistedPhrases = new ArrayList<>();
-        public List<String> spamWhitelistPrefixes = new ArrayList<>();
-        public SoundOption alertSound = SoundOption.EXPERIENCE_ORB;
-        public float alertSoundVolume = 1.0F;
-        public float alertSoundPitch = 1.0F;
-        public boolean alertSoundEnabled = true;
-        public boolean autoOpenOverlayOnFlag = true;
-        public boolean autoOpenPunishGuiOnFlag = false;
-        public boolean instantPunishForSpam = false;
-        public int hudX = -1;
-        public int hudY = -1;
-        public int hudWidth = 250;
-        public int hudHeight = 100;
-        public boolean evidenceScreenshotEnabled = true;
-        public String evidenceModeratorName = "";
-
-        // X-Ray Configuration
-        public int xrayAlertThreshold = 4;
-        public int xrayTimeWindowSeconds = 10;
-        public SoundOption xrayAlertSound;
-        public boolean xrayAlertSoundEnabled;
-
-        // Report Configuration
-        public SoundOption reportAlertSound;
-        public boolean reportAlertSoundEnabled;
-
-        public List<String> ignoredSystemUsernames = new ArrayList<>();
-        public boolean xrayAlertPing = true;
-        public boolean reportAlertPing = true;
-
-        public Config() {
-            this.alertSound = SoundOption.EXPERIENCE_ORB;
-            this.alertSoundVolume = 1.0F;
-            this.alertSoundPitch = 1.0F;
-            this.alertSoundEnabled = true;
-            this.autoOpenOverlayOnFlag = true;
-            this.autoOpenPunishGuiOnFlag = false;
-            this.instantPunishForSpam = false;
-            this.evidenceScreenshotEnabled = true;
-
-            // X-Ray Defaults
-            this.xrayAlertSound = SoundOption.EXPERIENCE_ORB;
-            this.xrayAlertSoundEnabled = true;
-
-            // Report Defaults
-            this.reportAlertSound = SoundOption.EXPERIENCE_ORB;
-            this.reportAlertSoundEnabled = true;
-        }
     }
 }
