@@ -137,6 +137,14 @@ public class ChatMonitorService {
 
         String cleanMessage = StringUtils.stripColorCodes(message);
 
+        // Prevent feedback loop: Ignore messages starting with our alert icons or
+        // containing tags
+        if (cleanMessage.startsWith("⚠") || cleanMessage.startsWith("🚨") ||
+                cleanMessage.contains("ModAssist") ||
+                cleanMessage.contains("[FLAGGED]") || cleanMessage.contains("[SPAM]")) {
+            return;
+        }
+
         // Priority: Check specific types (X-Ray / Report) BEFORE ignore check
         // These have their own username extraction logic
         if (handleXRay(cleanMessage, config))

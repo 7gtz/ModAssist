@@ -12,7 +12,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Service for sending notifications to Discord via webhooks.
@@ -127,6 +126,9 @@ public class DiscordWebhook {
     }
 
     private String constructBotUrl(String baseUrl, String endpoint) {
+        if (!baseUrl.startsWith("http")) {
+            baseUrl = "http://" + baseUrl;
+        }
         if (baseUrl.endsWith("/")) {
             return baseUrl.substring(0, baseUrl.length() - 1) + endpoint;
         }
@@ -145,22 +147,26 @@ public class DiscordWebhook {
     }
 
     private void sendPayloadAsync(String url, JsonObject payload) {
-        CompletableFuture.runAsync(() -> {
-            try {
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(url))
-                        .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(payload.toString()))
-                        .build();
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(payload.toString()))
+                    .build();
 
-                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-                if (response.statusCode() >= 400) {
-                    LOGGER.warn("Failed to send Discord payload. Status: {}", response.statusCode());
-                }
-            } catch (Exception e) {
-                LOGGER.error("Error sending Discord payload", e);
-            }
-        });
+            httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenAccept(response -> {
+                        if (response.statusCode() >= 400) {
+                            LOGGER.warn("Failed to send Discord payload. Status: {}", response.statusCode());
+                        }
+                    })
+                    .exceptionally(e -> {
+                        LOGGER.error("Error sending Discord payload to " + url, e);
+                        return null;
+                    });
+        } catch (Exception e) {
+            LOGGER.error("Error preparing Discord payload", e);
+        }
     }
 
     public static String formatAlert(String alertType, String username, String content) {

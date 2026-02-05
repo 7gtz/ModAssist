@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "autochatmod",
-  "version": "${mod_version}",
+  "version": "2.0.0",
   "name": "ModAssist",
   "description": "A mod created to assist InvadedLands staff members with moderation.",
   "authors": [

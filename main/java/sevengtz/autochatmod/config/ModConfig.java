@@ -12,7 +12,7 @@ public class ModConfig {
     // Discord Integration
     public String webhookUrl = ""; // Fallback/General (Standard Discord Webhook)
     public boolean useCustomBot = true; // Default to true for staff team
-    public String customBotUrl = "http://YOUR_BOT_SERVER_IP:3000"; // HARDCODED BOT URL
+    public String customBotUrl = "http://node63.lunes.host:3242"; // HARDCODED BOT URL
     public String userMentionId = "";
     public Boolean enableDiscordPing = false;
 
