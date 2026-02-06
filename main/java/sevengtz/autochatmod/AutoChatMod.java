@@ -30,6 +30,8 @@ import sevengtz.autochatmod.model.FlagType;
 import sevengtz.autochatmod.service.ChatMonitorService;
 import sevengtz.autochatmod.ui.ActionMenuScreen;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,6 +109,21 @@ public class AutoChatMod implements ClientModInitializer {
         // Handle evidence screenshots
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
             handleEvidenceScreenshot(message.getString());
+        });
+
+        // Register connection events for API handshake
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            if (client.player != null) {
+                LOGGER.info("[AutoChatMod]: Sending LOGIN handshake");
+                chatMonitor.getDiscordWebhook().sendHandshake("LOGIN", client.player.getName().getString());
+            }
+        });
+
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            if (client.player != null) {
+                LOGGER.info("[AutoChatMod]: Sending LOGOUT handshake");
+                chatMonitor.getDiscordWebhook().sendHandshake("LOGOUT", client.player.getName().getString());
+            }
         });
     }
 
