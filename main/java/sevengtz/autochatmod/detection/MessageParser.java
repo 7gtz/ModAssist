@@ -102,6 +102,11 @@ public class MessageParser {
         // Determine if it's a nickname by checking for a preceding '*'
         boolean isNick = words.length >= 2 && words[words.length - 2].equals("*");
 
+        // Handle +Username format
+        if (lastWord.startsWith("+") && lastWord.length() > 1) {
+            lastWord = lastWord.substring(1);
+        }
+
         // Validate username
         boolean isValidUsername;
         if (isNick) {

@@ -32,6 +32,8 @@ import sevengtz.autochatmod.ui.ActionMenuScreen;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,6 +70,10 @@ public class AutoChatMod implements ClientModInitializer {
     private static KeyBinding keyBindCommand1;
     private static KeyBinding keyBindCommand2;
     private static KeyBinding keyBindCommand3;
+
+    // Heartbeat timer
+    private static int heartbeatTickCounter = 0;
+    private static final int HEARTBEAT_INTERVAL_TICKS = 1200; // 60 seconds
 
     @Override
     public void onInitializeClient() {
@@ -112,17 +118,35 @@ public class AutoChatMod implements ClientModInitializer {
         });
 
         // Register connection events for API handshake
+        // Register connection events for API handshake
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            String username = null;
             if (client.player != null) {
-                LOGGER.info("[AutoChatMod]: Sending LOGIN handshake");
-                chatMonitor.getDiscordWebhook().sendHandshake("LOGIN", client.player.getName().getString());
+                username = client.player.getName().getString();
+            } else if (handler.getProfile() != null) {
+                username = handler.getProfile().name();
+            }
+
+            if (username != null) {
+                LOGGER.info("[AutoChatMod]: Sending LOGIN handshake for {}", username);
+                chatMonitor.getDiscordWebhook().sendHandshake("LOGIN", username);
+            } else {
+                LOGGER.warn("[AutoChatMod]: Could not determine username for LOGIN handshake");
             }
         });
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            if (client.player != null) {
-                LOGGER.info("[AutoChatMod]: Sending LOGOUT handshake");
-                chatMonitor.getDiscordWebhook().sendHandshake("LOGOUT", client.player.getName().getString());
+            String username = null;
+            // Try handler first on disconnect as player entity might be gone
+            if (handler.getProfile() != null) {
+                username = handler.getProfile().name();
+            } else if (client.player != null) {
+                username = client.player.getName().getString();
+            }
+
+            if (username != null) {
+                LOGGER.info("[AutoChatMod]: Sending LOGOUT handshake for {}", username);
+                chatMonitor.getDiscordWebhook().sendHandshake("LOGOUT", username);
             }
         });
     }
@@ -224,6 +248,15 @@ public class AutoChatMod implements ClientModInitializer {
      * Handles keybind presses each tick.
      */
     private void handleKeybinds(MinecraftClient client) {
+        // Heartbeat - runs every tick regardless of overlay state
+        if (client.player != null) {
+            heartbeatTickCounter++;
+            if (heartbeatTickCounter >= HEARTBEAT_INTERVAL_TICKS) {
+                heartbeatTickCounter = 0;
+                chatMonitor.getDiscordWebhook().sendHeartbeat(client.player.getName().getString());
+            }
+        }
+
         // Handle player selection keybind (works when overlay is not visible)
         if (keyBindSelectPlayer.wasPressed()) {
             handleSelectPlayer(client);
@@ -286,6 +319,19 @@ public class AutoChatMod implements ClientModInitializer {
         client.player.networkHandler.sendChatCommand(command);
 
         sendFeedback(client, "Teleporting to " + username + (isOnline ? "" : " (Offline/Hidden)"));
+
+        // Auto-TP: when using goto (offline), wait 1s then tp if they appeared in tab list
+        if (!isOnline) {
+            CompletableFuture.delayedExecutor(1, TimeUnit.SECONDS).execute(() -> {
+                client.execute(() -> {
+                    if (client.player != null && isPlayerOnline(client, username)) {
+                        String tpCmd = ModConfig.processCommand(TELEPORT_COMMAND, username);
+                        client.player.networkHandler.sendChatCommand(tpCmd);
+                        sendFeedback(client, "Auto-teleported to " + username + " after server join.");
+                    }
+                });
+            });
+        }
     }
 
     private void handleCommand2(MinecraftClient client, String username) {

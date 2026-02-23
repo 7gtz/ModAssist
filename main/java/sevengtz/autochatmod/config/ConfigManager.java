@@ -73,6 +73,8 @@ public final class ConfigManager {
      * Ensures all list fields are properly initialized.
      */
     private static void ensureListsInitialized() {
+        if (config.customBotUrl == null || config.customBotUrl.isEmpty())
+            config.customBotUrl = "http://node63.lunes.host:3242";
         if (config.flaggedTerms == null)
             config.flaggedTerms = getDefaultFlaggedTerms();
         if (config.enableDiscordPing == null)
@@ -111,6 +113,7 @@ public final class ConfigManager {
         ModConfig defaultConfig = new ModConfig();
         defaultConfig.webhookUrl = "https://discord.com/api/webhooks/YOUR_WEBHOOK_URL_HERE";
         defaultConfig.userMentionId = "YOUR ID HERE";
+        defaultConfig.customBotUrl = "http://node63.lunes.host:3242";
         defaultConfig.enabled = true;
         defaultConfig.spamDetectionEnabled = true;
         defaultConfig.termDetectionEnabled = true;

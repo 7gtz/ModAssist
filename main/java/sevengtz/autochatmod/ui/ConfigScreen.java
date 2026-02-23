@@ -74,6 +74,13 @@ public class ConfigScreen {
                                 .setSaveConsumer(v -> config.useCustomBot = v)
                                 .build());
 
+                general.addEntry(entryBuilder
+                                .startStrField(Text.literal("Custom Bot URL"), config.customBotUrl)
+                                .setDefaultValue("http://node63.lunes.host:3242")
+                                .setTooltip(Text.literal("Base URL for the custom Discord bot API"))
+                                .setSaveConsumer(v -> config.customBotUrl = v)
+                                .build());
+
                 general.addEntry(entryBuilder.startStrField(Text.literal("User Mention ID"), config.userMentionId)
                                 .setDefaultValue("")
                                 .setTooltip(Text.literal("Discord user ID to mention in alerts"))

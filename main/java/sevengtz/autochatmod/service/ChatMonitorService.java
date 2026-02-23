@@ -232,7 +232,8 @@ public class ChatMonitorService {
             discordWebhook.sendSpamAlert(userInfo.username(), messageContent, history);
         }
 
-        spamDetector.clearHistory(userInfo.username());
+        // spamDetector.clearHistory(userInfo.username()); // Removed to improve
+        // reliability
         SoundUtils.playAlertSound(config);
     }
 

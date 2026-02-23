@@ -137,11 +137,21 @@ public class DiscordWebhook {
             payload.addProperty("type", "handshake");
             payload.addProperty("status", status);
             payload.addProperty("username", username);
+            payload.addProperty("mentionId", config.userMentionId);
             sendPayloadAsync(url, payload);
         } else {
             // Fallback for standard webhook
             sendMessage(String.format("`Staff Handshake: %s %s`", username, status));
         }
+    }
+
+    public void sendHeartbeat(String username) {
+        ModConfig config = ConfigManager.getConfig();
+        if (!config.useCustomBot || !isWebhookConfigured(config.customBotUrl)) return;
+        String url = constructBotUrl(config.customBotUrl, "/api/heartbeat");
+        JsonObject payload = new JsonObject();
+        payload.addProperty("username", username);
+        sendPayloadAsync(url, payload);
     }
 
     private String constructBotUrl(String baseUrl, String endpoint) {
