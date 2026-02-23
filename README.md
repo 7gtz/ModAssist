@@ -4,12 +4,11 @@
 [![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.10-green.svg)](https://www.minecraft.net)
 [![Requires](https://img.shields.io/badge/Requires-Fabric-orange.svg)](https://fabricmc.net/)
 
-ModAssist is a powerful client-side Minecraft mod designed for server moderators. It monitors chat in real time, flags suspicious messages, detects spam, X-Ray activity, and player reports — then gives you one-click access to moderation commands. Pairs with an optional Discord bot for rich alerts and a live staff dashboard.
+ModAssist is a powerful client-side Minecraft mod designed for InvadedLands staff members. It monitors chat in real time, flags suspicious messages, detects spam, X-Ray activity, and player reports, then gives you one-click access to moderation commands. Pairs with a Discord bot for Discord-based alerts and a live staff dashboard.
 
 ---
 
 ## Table of Contents
-
 - [Key Features](#key-features)
 - [Installation](#installation)
 - [Discord Bot Setup](#discord-bot-setup)
@@ -42,7 +41,7 @@ ModAssist is a powerful client-side Minecraft mod designed for server moderators
 
 ## Installation
 
-This is a **client-side** mod. It only needs to be installed on the moderator's computer, not on the server.
+This is a **client-side** mod.
 
 **Prerequisites:**
 
@@ -65,16 +64,16 @@ All files go into your `/.minecraft/mods/` folder.
 
 **Staff Dashboard:**
 
-Once the Status Dashboard channel is set, the bot posts and continuously edits a single message showing all online staff — including their Minecraft skin face, Discord mention, and session duration. The dashboard updates on login, logout, and heartbeat timeout.
+Once the Status Dashboard channel is set, the bot posts a message showing all online staff.
 
 ---
 
 ## Usage Workflow
 
-1. **Passive Monitoring**: Play the game as normal. The mod analyzes chat in the background and sends heartbeats to the Discord bot every 60 seconds.
+1. **Passive Monitoring**: Play the game as normal. The mod analyzes chat in the background.
 2. **Alert!**: A player triggers a detection rule.
    - **In-Game**: A distinct alert sound plays (customizable per event type), and the message is highlighted in chat with a tag like `[SPAM]`, `[FLAGGED]`, or via the Action HUD.
-   - **On Discord**: A rich embed is sent to the appropriate channel. Online staff are pinged. Repeated alerts from the same player are grouped into a single updating embed.
+   - **On Discord**: An embed is sent to the appropriate channel. Online staff are pinged. Repeated alerts from the same player are grouped into a single updating embed.
 3. **Take Action**:
    - **Click** the player's username in the flagged chat message, or
    - **Look at a player** and press `G` to select them directly.
@@ -195,10 +194,10 @@ These can be changed in `Options → Controls → Key Binds` under the **ModAssi
 **A:** Check that **Use Custom Bot API** is enabled, the **Custom Bot URL** is correct and reachable, and **Ping on Discord Alert** is on. Verify the bot is running by checking its console output.
 
 **Q: The staff dashboard isn't updating.**
-**A:** Make sure you've used `/setchannel type:Status Dashboard channel:#your-channel` in Discord. The dashboard only updates when staff log in, log out, or the heartbeat times out.
+**A:** Make sure you've used `/setchannel type:Status Dashboard channel:#your-channel` in Discord. The dashboard only updates when staff log in, log out, or you time out.
 
 **Q: A staff member still shows as online after they disconnected.**
-**A:** The heartbeat timeout is 90 seconds. After the staff member's client stops sending heartbeats, they'll be removed automatically within ~90 seconds. If the bot itself was restarted, the first heartbeat from an active client will re-register them.
+**A:** The timeout is 90 seconds. After the staff member's client stops sending heartbeats, they'll be removed automatically within ~90 seconds. If the bot itself was restarted, the first heartbeat from an active client will re-register them.
 
 **Q: The mod is flagging messages I don't want it to.**
 **A:** The `Similarity Threshold` may be too low, or you need to add words to the `Whitelisted Terms` list. For example, if "grape" is being flagged because it's similar to a flagged word, add "grape" to the whitelist.
