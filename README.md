@@ -1,7 +1,7 @@
 # ModAssist - A Moderator's Assistant
 
 [![Mod Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/your-username/modassist)
-[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.4+-green.svg)](https://www.minecraft.net)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.10-green.svg)](https://www.minecraft.net)
 [![Requires](https://img.shields.io/badge/Requires-Fabric-orange.svg)](https://fabricmc.net/)
 
 ModAssist is a powerful client-side Minecraft mod designed for server moderators. It monitors chat in real time, flags suspicious messages, detects spam, X-Ray activity, and player reports — then gives you one-click access to moderation commands. Pairs with an optional Discord bot for rich alerts and a live staff dashboard.
@@ -48,7 +48,7 @@ This is a **client-side** mod. It only needs to be installed on the moderator's 
 
 All files go into your `/.minecraft/mods/` folder.
 
-1. **Minecraft `1.21.4+`**
+1. **Minecraft `1.21.10`**
 2. [Fabric Loader](https://fabricmc.net/use/installer/)
 3. [Fabric API](https://modrinth.com/mod/fabric-api)
 4. [ModMenu](https://modrinth.com/mod/modmenu) (Required for in-game configuration)
