@@ -179,9 +179,9 @@ These can be changed in `Options → Controls → Key Binds` under the **ModAssi
 | `G` | Select Player | Always | Look at a player and press to open the Action HUD for them. |
 | `X` | Teleport | HUD open | Teleport to the target. Auto-TPs after cross-server `/goto`. |
 | `P` | Punish | HUD open | Open punishment GUI (or instant-punish for spam). |
-| `L` | Command #1 | HUD open | Run configurable command (default: Check Alts). |
-| `H` | Command #2 | HUD open | Run configurable command (default: Check Fly). |
-| `9` | Command #3 | HUD open (Report) | Run configurable command (default: Approve Report). |
+| `L` | Command #1 | HUD open | Run configurable command. |
+| `H` | Command #2 | HUD open | Run configurable command. |
+| `9` | Command #3 | HUD open (Report) | Run configurable command. |
 | `C` | Close | HUD open | Close the Action HUD. |
 
 ---
