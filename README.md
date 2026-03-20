@@ -28,7 +28,7 @@ ModAssist is a powerful client-side Minecraft mod designed for InvadedLands staf
 * **Discord Bot Integration**: Sends structured alert embeds to per-type Discord channels (X-Ray, Spam, Report, Flagged) via a custom bot API, with grouped/editable messages and deduplication.
 * **Staff Activity Dashboard**: A live-updating Discord embed that shows all online staff with their Minecraft skin, Discord mention, and session duration.
 * **Heartbeat System**: The mod sends periodic heartbeats to the bot. If a moderator crashes or closes their game without logging out, the bot automatically detects the timeout and removes them from the online staff list.
-* **In-Game Action Overlay (HUD)**: A draggable, resizable glassmorphism-styled overlay with one-key access to teleport, punish, and custom commands.
+* **In-Game Action Overlay (HUD)**: A draggable, resizable glassmorphism-styled overlay with one-key access to teleport, and custom commands.
 * **Auto-Teleport on Server Join**: When teleporting to an offline player (cross-server), the mod automatically sends `/tp` after arriving on their server.
 * **Smart Nickname Resolution**: Automatically resolves nicknames to real usernames before executing moderation actions.
 * **Click-to-Act Chat**: All player messages become clickable — click any username to open the Action HUD.
@@ -80,7 +80,7 @@ Once the Status Dashboard channel is set, the bot posts a message showing all on
    - The **Action HUD** appears with the target's name and flag type.
 4. **Use the HUD**:
    - Press **`X`** → Teleport to the player. If they're on another server, the mod runs `/goto` first, then auto-teleports after you arrive.
-   - Press **`P`** → Open the punishment GUI (`/punish`). For spam, this can be set to instant-punish mode.
+   - Press **`P`** → Open the GUI.
    - Press **`L`** → Run Command #1.
    - Press **`H`** → Run Command #2.
    - Press **`9`** → Run Command #3.
@@ -109,8 +109,7 @@ Open the config via the main menu → **Mods** → **ModAssist** → ⚙️ gear
 | Option | Description |
 | :--- | :--- |
 | `Auto-Open Overlay on Flag` | Automatically show the Action HUD when a message is flagged. |
-| `Auto-Open Punish GUI on Flag` | Automatically run `/punish` when a message is flagged (requires overlay to be on). |
-| `Instant Punish for Spam` | Pressing Punish on a spammer runs `/punish <user> i:1` and closes the overlay instantly. |
+| `Auto-Open  GUI on Flag` | Automatically open GUI when a message is flagged (requires overlay to be on). |
 | `Spam Detection` | Toggle the spam detection module. |
 | `Term Detection` | Toggle flagging by individual words. |
 | `Phrase Detection` | Toggle flagging by exact phrases. |
@@ -176,8 +175,8 @@ These can be changed in `Options → Controls → Key Binds` under the **ModAssi
 | Key | Action | Context | Description |
 | :-- | :--- | :--- | :--- |
 | `G` | Select Player | Always | Look at a player and press to open the Action HUD for them. |
-| `X` | Teleport | HUD open | Teleport to the target. Auto-TPs after cross-server `/goto`. |
-| `P` | Punish | HUD open | Open punishment GUI (or instant-punish for spam). |
+| `X` | Teleport | HUD open | Teleport to the target. |
+| `P` | P | HUD open | Open  GUI. |
 | `L` | Command #1 | HUD open | Run configurable command. |
 | `H` | Command #2 | HUD open | Run configurable command. |
 | `9` | Command #3 | HUD open (Report) | Run configurable command. |
@@ -201,9 +200,6 @@ These can be changed in `Options → Controls → Key Binds` under the **ModAssi
 
 **Q: The mod is flagging messages I don't want it to.**
 **A:** The `Similarity Threshold` may be too low, or you need to add words to the `Whitelisted Terms` list. For example, if "grape" is being flagged because it's similar to a flagged word, add "grape" to the whitelist.
-
-**Q: The auto-teleport after `/goto` isn't working.**
-**A:** The auto-TP only triggers when the target was initially detected as offline (not in tab list). After running `/goto`, the mod waits 1 second and checks if the player appeared in the tab list. If the server switch takes longer than 1 second, the auto-TP won't trigger — use `X` again manually.
 
 ---
 
