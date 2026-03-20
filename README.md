@@ -79,7 +79,7 @@ Once the Status Dashboard channel is set, the bot posts a message showing all on
    - **Look at a player** and press `G` to select them directly.
    - The **Action HUD** appears with the target's name and flag type.
 4. **Use the HUD**:
-   - Press **`X`** → Teleport to the player. If they're on another server, the mod runs `/goto` first, then auto-teleports after you arrive.
+   - Press **`X`** → Teleport to the player. 
    - Press **`P`** → Open the GUI.
    - Press **`L`** → Run Command #1.
    - Press **`H`** → Run Command #2.
