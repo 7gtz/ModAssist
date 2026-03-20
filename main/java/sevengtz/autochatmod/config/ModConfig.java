@@ -73,17 +73,17 @@ public class ModConfig {
     // Use {player} as placeholder for the target username
     // Commands are sent without the leading slash
 
-    // Command #1 (Default: Alts)
-    public String command1Label = "Check Alts";
-    public String command1Command = "alts {player} true";
+    // Command #1 
+    public String command1Label = "Placeholder";
+    public String command1Command = "/meow";
 
-    // Command #2 (Default: Check Fly)
-    public String command2Label = "Check Fly";
-    public String command2Command = "checkfly {player}";
+    // Command #2 
+    public String command2Label = "Placeholder";
+    public String command2Command = "/67";
 
-    // Command #3 (Default: Approve Report)
-    public String command3Label = "Approve Report";
-    public String command3Command = "approvereport {player}";
+    // Command #3 
+    public String command3Label = "Placeholder";
+    public String command3Command = "/test";
 
     /**
      * Creates a new ModConfig with default values.
